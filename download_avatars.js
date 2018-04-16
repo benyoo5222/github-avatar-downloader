@@ -20,13 +20,24 @@ function getRepoContributors(repoOwner, repoName, cb) {
 
 // instead of url we are passing the whole options object which includes the url and the headers
   request(options, function(err, res, body) {
-    cb(err, body);
+
+    var newobj= {}; // container for new object
+    var obj= JSON.parse(body); // changes the string to an JSON file type
+
+    for(var a = 0; a < obj.length; a++){
+      newobj[obj[a].login] = obj[a]["avatar_url"]; //looped the JSON file type and set the keys to the name and the value to their avatar url.
+    }
+
+
+    cb(err, newobj);
   });
 }
 
 getRepoContributors("jquery", "jquery", function(err, result) {
-  console.log("Errors:", err);
-  console.log("Result:", result);
+  for(var key in result){
+    console.log(result[key]); //uses each key name and prints the url.
+  }
+
 });
 
 
