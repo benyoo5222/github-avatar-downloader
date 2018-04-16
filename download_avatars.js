@@ -2,6 +2,7 @@ var request = require('request');
 var token = require('./secrets.js');
 var fs= require('fs');
 var request= require('request');
+var path = require('path');
 
 console.log('Welcome to the GitHub Avatar Downloader!');
 
@@ -37,16 +38,25 @@ function getRepoContributors(repoOwner, repoName, cb) {
 
 getRepoContributors("jquery", "jquery", function(err, result) {
   for(var key in result){
-    console.log(result[key]); //uses each key name and prints the url.
+    downloadImageByURL(result[key],key); //passes each key which is the name and the value which is the picture
   }
 
 });
 
 //fetching the url and filepath
-function downloadImageByURL(url, filePath) {
+function downloadImageByURL(url, name) {
   // ...
-  request.get(url+filePath).on('response', function(){}).pipe(fs.createWriteStream('./avatars/future.jpg'));
+  var filepath= "avatar/"+name+".jpg";
+  var dirname = path.dirname(filepath);
 
+  if (!fs.existsSync(dirname)) {
+
+    fs.mkdirSync(dirname);
+
+  };
+
+  request.get(url).on('response', function(){}).pipe(fs.createWriteStream(filepath));
+//url represents the image and the names represent the contributors name
 }
 
-downloadImageByURL("https://avatars2.githubusercontent.com/u/2741?v=3&s=466", "avatars/kvirani.jpg");
+
