@@ -3,6 +3,14 @@ var token = require('./secrets.js');
 var fs= require('fs');
 var request= require('request');
 var path = require('path');
+var repoowner = process.argv[2];
+var reponame= process.argv[3];
+
+if(repoowner === undefined){
+  throw "Please write a Repo Owner's name"; // throw ends the program
+} else if (reponame === undefined) {
+  throw "Please write a Repo name";
+} else {
 
 console.log('Welcome to the GitHub Avatar Downloader!');
 
@@ -36,9 +44,9 @@ function getRepoContributors(repoOwner, repoName, cb) {
   });
 }
 
-getRepoContributors("jquery", "jquery", function(err, result) {
+getRepoContributors(repoowner, reponame, function(err, result) {
   for(var key in result){
-    downloadImageByURL(result[key],key); //passes each key which is the name and the value which is the picture
+    downloadImageByURL(result[key], key); //passes each key, which is the name and the value which is the picture URL
   }
 
 });
@@ -46,17 +54,17 @@ getRepoContributors("jquery", "jquery", function(err, result) {
 //fetching the url and filepath
 function downloadImageByURL(url, name) {
   // ...
-  var filepath= "avatar/"+name+".jpg";
+  var filepath= "avatar/"+name+".jpg"; //set the varible filepath to the directory avatar/"the name of the contributor"+.jpg
   var dirname = path.dirname(filepath);
 
-  if (!fs.existsSync(dirname)) {
+  if (!fs.existsSync(dirname)) { //if there is no directory
 
-    fs.mkdirSync(dirname);
+    fs.mkdirSync(dirname); //creates the directory with the file name
 
   };
 
   request.get(url).on('response', function(){}).pipe(fs.createWriteStream(filepath));
-//url represents the image and the names represent the contributors name
+//url represents the image and the name represent the contributors name
 }
-
+}
 
